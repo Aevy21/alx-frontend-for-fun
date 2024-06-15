@@ -1,26 +1,47 @@
 #!/usr/bin/python3
 """
-markdown2html.py: A script to convert Markdown files to HTML.
-
-Usage:
-    ./markdown2html.py README.md README.html
-
-This script takes two arguments:
-1. The name of the Markdown file to be converted.
-2. The name of the output HTML file.
-
-Requirements:
-- If the number of arguments is less than 2: 
-  print in STDERR "Usage: ./markdown2html.py README.md README.html" and exit with status 1.
-- If the Markdown file doesn’t exist: 
-  print in STDERR "Missing <filename>" and exit with status 1.
-- Otherwise, print nothing and exit with status 0.
+markdown2html.py
+A script to convert Markdown files to HTML files.
 """
+
 import sys
 import os
-import markdown
+
+def parse_markdown(markdown_text):
+    """
+    Parses the given markdown text and converts it to HTML.
+    
+    Args:
+        markdown_text (str): The markdown content to be converted.
+    
+    Returns:
+        str: The HTML representation of the markdown content.
+    """
+    html_lines = []
+    lines = markdown_text.split('\n')
+    
+    for line in lines:
+        if line.startswith('# '):
+            html_lines.append(f"<h1>{line[2:].strip()}</h1>")
+        elif line.startswith('## '):
+            html_lines.append(f"<h2>{line[3:].strip()}</h2>")
+        elif line.startswith('### '):
+            html_lines.append(f"<h3>{line[4:].strip()}</h3>")
+        elif line.startswith('#### '):
+            html_lines.append(f"<h4>{line[5:].strip()}</h4>")
+        elif line.startswith('##### '):
+            html_lines.append(f"<h5>{line[6:].strip()}</h5>")
+        elif line.startswith('###### '):
+            html_lines.append(f"<h6>{line[7:].strip()}</h6>")
+        else:
+            html_lines.append(f"<p>{line.strip()}</p>")
+    
+    return '\n'.join(html_lines)
 
 def main():
+    """
+    Main function to handle file reading, conversion, and writing.
+    """
     if len(sys.argv) < 3:
         print("Usage: ./markdown2html.py README.md README.html", file=sys.stderr)
         sys.exit(1)
@@ -35,7 +56,7 @@ def main():
     try:
         with open(input_file, 'r') as md_file:
             markdown_text = md_file.read()
-            html_content = markdown.markdown(markdown_text)
+            html_content = parse_markdown(markdown_text)
         
         with open(output_file, 'w') as html_file:
             html_file.write(html_content)
