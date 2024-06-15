@@ -6,6 +6,7 @@ A script to convert Markdown files to HTML files.
 
 import sys
 import os
+import re
 
 def parse_markdown(markdown_text):
     """
@@ -19,22 +20,125 @@ def parse_markdown(markdown_text):
     """
     html_lines = []
     lines = markdown_text.split('\n')
-    
+    in_ul = False
+    in_ol = False
+    in_p = False
+    paragraph = []
+
+    def close_paragraph():
+        nonlocal in_p
+        if in_p:
+            html_lines.append(f"<p>{' '.join(paragraph)}</p>")
+            paragraph.clear()
+            in_p = False
+
+    def convert_bold_syntax(text):
+        """
+        Converts bold syntax in Markdown to HTML.
+        
+        Args:
+            text (str): The text containing Markdown bold syntax.
+        
+        Returns:
+            str: The text with HTML bold syntax.
+        """
+        return re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+
     for line in lines:
-        if line.startswith('# '):
-            html_lines.append(f"<h1>{line[2:].strip()}</h1>")
-        elif line.startswith('## '):
-            html_lines.append(f"<h2>{line[3:].strip()}</h2>")
-        elif line.startswith('### '):
-            html_lines.append(f"<h3>{line[4:].strip()}</h3>")
-        elif line.startswith('#### '):
-            html_lines.append(f"<h4>{line[5:].strip()}</h4>")
-        elif line.startswith('##### '):
-            html_lines.append(f"<h5>{line[6:].strip()}</h5>")
-        elif line.startswith('###### '):
-            html_lines.append(f"<h6>{line[7:].strip()}</h6>")
+        stripped_line = line.strip()
+        
+        if re.match(r'^# ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h1>{convert_bold_syntax(stripped_line[2:].strip())}</h1>")
+        
+        elif re.match(r'^## ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h2>{convert_bold_syntax(stripped_line[3:].strip())}</h2>")
+        
+        elif re.match(r'^### ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h3>{convert_bold_syntax(stripped_line[4:].strip())}</h3>")
+        
+        elif re.match(r'^#### ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h4>{convert_bold_syntax(stripped_line[5:].strip())}</h4>")
+        
+        elif re.match(r'^##### ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h5>{convert_bold_syntax(stripped_line[6:].strip())}</h5>")
+        
+        elif re.match(r'^###### ', stripped_line):
+            close_paragraph()
+            if in_ul:
+                html_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                html_lines.append('</ol>')
+                in_ol = False
+            html_lines.append(f"<h6>{convert_bold_syntax(stripped_line[7:].strip())}</h6>")
+        
+        elif re.match(r'^- ', stripped_line):
+            close_paragraph()
+            if not in_ul:
+                if in_ol:
+                    html_lines.append('</ol>')
+                    in_ol = False
+                html_lines.append('<ul>')
+                in_ul = True
+            html_lines.append(f"<li>{convert_bold_syntax(stripped_line[2:].strip())}</li>")
+        
+        elif re.match(r'^\d+\. ', stripped_line):
+            close_paragraph()
+            if not in_ol:
+                if in_ul:
+                    html_lines.append('</ul>')
+                    in_ul = False
+                html_lines.append('<ol>')
+                in_ol = True
+            html_lines.append(f"<li>{convert_bold_syntax(stripped_line[stripped_line.find(' ') + 1:].strip())}</li>")
+        
         else:
-            html_lines.append(f"<p>{line.strip()}</p>")
+            if stripped_line:
+                paragraph.append(convert_bold_syntax(stripped_line))
+                in_p = True
+            else:
+                close_paragraph()
+    
+    close_paragraph()
+    if in_ul:
+        html_lines.append('</ul>')
+    if in_ol:
+        html_lines.append('</ol>')
     
     return '\n'.join(html_lines)
 
