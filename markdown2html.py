@@ -16,34 +16,35 @@ Requirements:
   print in STDERR "Missing <filename>" and exit with status 1.
 - Otherwise, print nothing and exit with status 0.
 """
-
 import sys
 import os
 import markdown
 
 def main():
-    """Main function to convert Markdown to HTML."""
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         print("Usage: ./markdown2html.py README.md README.html", file=sys.stderr)
         sys.exit(1)
-
-    markdown_file = sys.argv[1]
+    
+    input_file = sys.argv[1]
     output_file = sys.argv[2]
-
-    if not os.path.exists(markdown_file):
-        print(f"Missing {markdown_file}", file=sys.stderr)
+    
+    if not os.path.exists(input_file):
+        print(f"Missing {input_file}", file=sys.stderr)
         sys.exit(1)
-
-    with open(markdown_file, 'r', encoding='utf-8') as md_file:
-        markdown_content = md_file.read()
-
-    html_content = markdown.markdown(markdown_content)
-
-    with open(output_file, 'w', encoding='utf-8') as html_file:
-        html_file.write(html_content)
-
-    sys.exit(0)
+    
+    try:
+        with open(input_file, 'r') as md_file:
+            markdown_text = md_file.read()
+            html_content = markdown.markdown(markdown_text)
+        
+        with open(output_file, 'w') as html_file:
+            html_file.write(html_content)
+        
+        sys.exit(0)
+    
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
-
