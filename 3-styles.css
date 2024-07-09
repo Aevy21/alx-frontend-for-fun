@@ -1,0 +1,115 @@
+/* Reset some default styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+/* Style the menu */
+.menu {
+    position: relative;
+}
+
+.menu-open {
+    display: none;
+}
+
+.menu-open-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e74c3c; /* Red color */
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.3s;
+}
+
+.menu-line {
+    display: block;
+    position: absolute;
+    width: 30px;
+    height: 4px;
+    background-color: #fff;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.menu-line-1 {
+    top: 15px;
+}
+
+.menu-line-2 {
+    top: 23px;
+}
+
+.menu-line-3 {
+    top: 31px;
+}
+
+/* Style for when the menu is open */
+.menu-open:checked + .menu-open-button .menu-line-1 {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-open:checked + .menu-open-button .menu-line-2 {
+    opacity: 0;
+}
+
+.menu-open:checked + .menu-open-button .menu-line-3 {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Style the menu items */
+.menu-item {
+    display: block;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e74c3c; /* Red color */
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+    transform: scale(0);
+    transition: transform 0.3s, background-color 0.3s;
+    z-index: 1;
+}
+
+.menu-item:hover {
+    background-color: #c0392b; /* Darker red */
+}
+
+.menu-open:checked ~ .menu-item {
+    transform: scale(1);
+}
+
+/* Position each menu item vertically */
+.menu-item:nth-child(3) {
+    top: 60px;
+}
+
+.menu-item:nth-child(4) {
+    top: 120px;
+}
+
+.menu-item:nth-child(5) {
+    top: 180px;
+}
+
+.menu-item:nth-child(6) {
+    top: 240px;
+}
+
+.menu-item:nth-child(7) {
+    top: 300px;
+}
