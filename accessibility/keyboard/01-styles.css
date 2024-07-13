@@ -662,7 +662,6 @@ ul.row {
 .card-work .card-title {
   text-align: center;
   margin: 0;
-  
   height: 100%;
   position: relative;
 }
@@ -671,6 +670,7 @@ ul.row {
   display: block;
   text-decoration: none;
   padding-top: 45%;
+  opacity: 0;
 }
 
 .card-work .card-title a::after {
