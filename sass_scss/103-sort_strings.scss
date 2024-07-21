@@ -1,34 +1,44 @@
-/* Function to compare two strings */
-@function compare($a, $b) {
-  @if $a < $b {
-    @return -1;
-  } @else if $a > $b {
-    @return 1;
-  } @else {
-    @return 0;
-  }
+/* Sorts the variable $list_to_sort and prints the sorted list in the debug output. */
+
+@import "103-sort_list";
+
+$sort-order: a b c d e f g h i j k l m n o p q r s t u v w x y z;
+
+@function compare($string-1, $string-2, $sort-order) {
+	$string-1: to-lower-case(unquote($string-1));
+	$string-2: to-lower-case(unquote($string-2));
+
+	@for $i from 1 through min(str-length($string-1), str-length($string-2)) {
+		$char-1: str-slice($string-1, $i, $i);
+		$char-2: str-slice($string-2, $i, $i);
+
+		@if ($char-1 and $char-2 and index($sort-order, $char-1) != index($sort-order, $char-2)) {
+			@return (index($sort-order, $char-1) > index($sort-order, $char-2));
+		}
+	}
+
+	@return (str-length($string-1) > str-length($string-2));
 }
 
-/* Function to sort a list manually */
-@function manual-sort($list) {
-  $sorted-list: ();
-  $list-length: length($list);
+@function swap($list, $index-1, $index-2) {
+	$temp: nth($list, $index-1);
+	$list: set-nth($list, $index-1, nth($list, $index-2));
+	$list: set-nth($list, $index-2, $temp);
 
-  @for $i from 1 through $list-length {
-    $min-index: $i;
-
-    @for $j from $i + 1 through $list-length {
-      @if compare(nth($list, $j), nth($list, $min-index)) == -1 {
-        $min-index: $j;
-      }
-    }
-
-    /* Swap elements */
-    $temp: nth($list, $i);
-    $sorted-list: append($sorted-list, nth($list, $min-index));
-    $list: set(nth($list, $i), nth($list, $min-index));
-    $list: set(nth($list, $min-index), $temp);
-  }
-
-  @return $sorted-list;
+	@return ($list);
 }
+
+@function sort_list($list, $sort-order) {
+	$len: length($list);
+	@for $i from 1 through $len {
+		@for $j from 1 to $len {
+			@if (compare(nth($list, $j), nth($list, $j + 1), $sort-order)) {
+				$list: swap($list, $j, $j + 1);
+			}
+		}
+	}
+
+	@return ($list);
+}
+
+@debug sort_list($list_to_sort, $sort-order);
