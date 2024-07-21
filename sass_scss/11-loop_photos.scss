@@ -1,0 +1,9 @@
+// Import the images
+@import '10-images';
+
+@each $name in $list-names {
+  .#{$name} {
+    background-image: url("#{$image-path}/#{$name}.jpg");
+  }
+}
+
